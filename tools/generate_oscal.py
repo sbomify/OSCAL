@@ -449,6 +449,34 @@ def build_catalog(questions, section_descriptions, subsection_descriptions) -> d
 
 
 # ---------------------------------------------------------------------------
+# Post-processing: fix oscal-pydantic output to match NIST JSON schema
+# ---------------------------------------------------------------------------
+
+def _fixup_schema_compliance(data: dict):
+    """Fix known divergences between oscal-pydantic output and the NIST schema."""
+
+    # Fix 1: Party.remarks — oscal-pydantic emits list[str], schema expects string
+    for party in data.get("catalog", {}).get("metadata", {}).get("parties", []):
+        if isinstance(party.get("remarks"), list):
+            party["remarks"] = "\n".join(party["remarks"])
+
+    # Fix 2: Prop values containing newlines — schema pattern is ^\S(.*\S)?$
+    # which does not allow embedded newlines. Collapse to single line.
+    def fix_props(obj):
+        for prop in obj.get("props", []):
+            val = prop.get("value", "")
+            if "\n" in val:
+                prop["value"] = " ".join(line.strip() for line in val.splitlines() if line.strip())
+        for ctrl in obj.get("controls", []):
+            fix_props(ctrl)
+        for grp in obj.get("groups", []):
+            fix_props(grp)
+
+    for grp in data.get("catalog", {}).get("groups", []):
+        fix_props(grp)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -461,12 +489,15 @@ def main():
     # Serialize using oscal-pydantic's built-in serializer (by_alias, exclude_none)
     json_str = doc.model_dump_json()
 
-    # Also produce a dict for stats
+    # Post-process to fix oscal-pydantic quirks vs NIST schema:
+    # 1. Party.remarks is list[str] in pydantic model but string in OSCAL schema
+    # 2. Prop values with newlines violate the ^\S(.*\S)?$ pattern
     data = json.loads(json_str)
+    _fixup_schema_compliance(data)
 
     output_path = str(repo_root / "catalogs" / "cyber-essentials" / "danzell-v16" / "catalog.json")
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write(json_str)
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
     print(f"Generated {output_path}")
 

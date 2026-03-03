@@ -3,7 +3,7 @@
         "uuid": "4cc5dcd6-2787-522e-aed4-926d28b64af7",
         "metadata": {
             "title": "Cyber Essentials Question Set — Danzell (April 2026, Version 16)",
-            "last-modified": "2026-03-03T13:43:55.285870+00:00",
+            "last-modified": "2026-03-03T13:47:52.806036+00:00",
             "version": "16.0",
             "oscal-version": "1.1.2",
             "roles": [
@@ -21,17 +21,13 @@
                     "uuid": "c0ad566c-f5dd-5d92-91f9-6e432ac626f5",
                     "type": "organization",
                     "name": "IASME Consortium",
-                    "remarks": [
-                        "IASME manages the Cyber Essentials scheme on behalf of the NCSC."
-                    ]
+                    "remarks": "IASME manages the Cyber Essentials scheme on behalf of the NCSC."
                 },
                 {
                     "uuid": "d4172ab3-b0fa-5315-9123-9c43a6474519",
                     "type": "organization",
                     "name": "National Cyber Security Centre (NCSC)",
-                    "remarks": [
-                        "NCSC owns the Cyber Essentials scheme."
-                    ]
+                    "remarks": "NCSC owns the Cyber Essentials scheme."
                 }
             ],
             "responsible-parties": [
@@ -939,7 +935,7 @@
                             {
                                 "name": "response-type",
                                 "ns": "https://iasme.co.uk/ns/cyber-essentials",
-                                "value": "Multiple choice:\nWhole organisation\nPartial organisation"
+                                "value": "Multiple choice: Whole organisation Partial organisation"
                             }
                         ],
                         "parts": [
